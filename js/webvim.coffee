@@ -47,6 +47,9 @@ class Commander
     return id
 
 window.WebVim.commander = new Commander()
+class Buffer
+  constructor: () ->
+
 
 class ViewPort
   constructor: (@elem, @rows=24, @columns=80) ->
@@ -81,6 +84,7 @@ class ViewPort
   moveCursorTo: (@cursorX, @cursorY) ->
     @removeCursor()
     @elem.find(@constructCharId @cursorX, @cursorY ).addClass 'cursor'
+
   handleKeyPress: (evt) ->
     console.log evt
 
