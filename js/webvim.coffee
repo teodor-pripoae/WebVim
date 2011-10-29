@@ -47,8 +47,58 @@ class Commander
     return id
 
 window.WebVim.commander = new Commander()
+
 class Buffer
-  constructor: () ->
+  constructor: (data) ->
+    @viewPorts = {}
+    @data = [""]
+
+  parseData: (data) ->
+    @data = data.split("\n")
+    for id, viewPort of  @viewPorts
+      setTimeout( () ->
+        viewPort.handleLineChange(0,viewPort.rows - 1)
+      
+      ,0)
+
+  open: (data) ->
+    @parseData(data)
+
+  addViewPort: (viewPort) ->
+    @viewPorts[viewPort.id] = viewPort
+
+  deleteViewPort: (viewPort) ->
+    delete @viewPorts[viewPort.id]
+
+  propagateLineChange: (x, y = undefined) ->
+    y = x if not y
+
+    for id, viewPort of  @viewPorts
+      viewPort.handleLineChange(x,y)
+
+  deleteLines:  (x, y = undefined) ->
+    x = 0 unless x > 0
+    y = x unless y
+    
+    diff = (y-x+1)
+    length = @data.length
+
+    @data[x..] = @data[(y+1)..]
+
+    @propagateLineChange x, length - 1
+
+  getLine: (x) ->
+    if (x >= @data.length)
+      ""
+    else
+      @data[x]
+
+  getLineCount: () ->
+    @data.length - 1
+
+
+
+
 
 
 class ViewPort
@@ -64,10 +114,16 @@ class ViewPort
     @elem.empty()
     @elem.append webvim.viewport {rows: 24, columns: 80, idPrefix: @id}
 
-    #Set up cursor
+    #Set up a Buffer
     
-    @moveCursorTo(1,1)
+    @buffer = new Buffer()
 
+    @buffer.addViewPort this
+    @buffer.open("Ana are mere si pere")
+
+    #Set up cursor   
+
+    @moveCursorTo(1,1)
 
   select: () ->
     console.log "Focus"
@@ -77,6 +133,9 @@ class ViewPort
 
   constructCharId: (x,y) ->
     "##{@id}-character-#{x}-#{y}"
+
+  constructLineId: (x) ->
+    "##{@id}-line-#{x}"
 
   removeCursor: () ->
     @elem.find('.cursor').removeClass('cursor')
@@ -88,6 +147,20 @@ class ViewPort
   handleKeyPress: (evt) ->
     console.log evt
 
+  handleLineChange: (x, y) ->
+    for line in [x..y]
+      @updateLine(line)
+
+  updateLine: (line) ->
+    lineElem = @elem.find(@constructLineId(line))
+
+    lineElem.find('span').html('&nbsp')
+
+    data = @buffer.getLine(line)
+    len = Math.max data.length, @columns
+    
+    for column in [0..len]
+      lineElem.find(@constructCharId line, column ).html(data[column])
 
 $(document).ready ()->
   window.x = new ViewPort $('.vim')
