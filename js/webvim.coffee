@@ -48,6 +48,20 @@ class Commander
 
 window.WebVim.commander = new Commander()
 
+class KeyMapper
+  constructor: () ->
+    @maps = {}
+
+  setMap: (key, fnc) ->
+    @maps[key] = fnc
+
+  getMap: (key) ->
+    @maps[key]
+  
+  deleteMap: (key) ->
+    delete @maps[key]
+
+
 class Buffer
   constructor: (data) ->
     @viewPorts = {}
@@ -95,9 +109,6 @@ class Buffer
 
   getLineCount: () ->
     @data.length - 1
-
-
-
 
 
 
