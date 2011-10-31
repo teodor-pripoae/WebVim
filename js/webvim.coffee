@@ -16,9 +16,15 @@ class Commander
     @viewPortCount = 0
 
     $(document).click @handleDocumentClick
-    $(document).keypress @handleDocumentKeyPress
+    $(document).keypress (evt) ->
+      console.log evt.keyCode
+    #$(document).keydown @handleDocumentKeyPress
+    $(document).keydown (evt) ->
+      console.log evt.keyCode, evt.which
 
   handleDocumentKeyPress: (evt) =>
+    evt.stopPropagation()
+    evt.preventDefault()
     if @currentViewPortId
       @viewPorts[@currentViewPortId].handleKeyPress(evt)
 
@@ -128,6 +134,10 @@ class MovementFunctionDatabase extends BaseFunctionDataBase
     viewport.cursorX -= 1
     viewport.moveCursorTo viewport.cursorX, viewport.cursorY
 
+class GlobalFunctionDatabase extends BaseFunctionDataBase
+  commandMode: (viewPort) ->
+    viewPort.changeMode('command')
+
 class FunctionDataBase extends BaseFunctionDataBase
   constructor: (viewport)->
     super(viewport)
@@ -220,6 +230,10 @@ class ViewPort
     @cursorY = 1
     @moveCursorTo(@cursorX, @cursorY)
 
+  changeMode: (mode) ->
+    @currentMode = mode
+
+
   select: () ->
     console.log "Focus"
 
@@ -240,14 +254,19 @@ class ViewPort
     @elem.find(@constructCharId @cursorX, @cursorY ).addClass 'cursor'
 
   handleKeyPress: (evt) ->
-    @currentKeySequence += String.fromCharCode(evt.charCode)
+    if evt.keyCode == 17 or evt.keyCode == 18 or evt.keyCode == 16
+      return
+    @currentKeySequence += String.fromCharCode(evt.keyCode)
+    console.log evt.keyCode, String.fromCharCode(evt.keyCode)
+    console.log evt
     console.log @currentKeySequence
+
 
     if @modes[@currentMode].hasMap(@currentKeySequence)
       @functionDatabase.callFunction( @modes[@currentMode].getMap @currentKeySequence)
       @currentKeySequence = ""
       
-      
+     
 
 
   handleLineChange: (x, y) ->
