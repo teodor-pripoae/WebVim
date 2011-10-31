@@ -57,9 +57,30 @@ class KeyMapper
 
   getMap: (key) ->
     @maps[key]
-  
+
+  hasMap: (key) ->
+    if @maps[key]? then true else false
+   
   deleteMap: (key) ->
     delete @maps[key]
+
+class CommandKeyMapper extends KeyMapper
+  constructor: () ->
+    super()
+
+    @setMap "t", "test"
+
+
+class BaseFunctionDataBase
+
+  hasFunction: (fncName) ->
+    if this.prototype.fncName then true else false
+  call_fnc: (name) ->
+    this[name]()
+
+class FunctionDataBase extends BaseFunctionDataBase
+  test: () ->
+    alert "merge"
 
 
 class Buffer
@@ -114,6 +135,14 @@ class Buffer
 
 class ViewPort
   constructor: (@elem, @rows=24, @columns=80) ->
+    @currentMode = 'command'
+    @currentKeySequence = ""
+
+    @modes = {}
+    @modes['command'] = new CommandKeyMapper()
+    
+    @functionDatabase = new FunctionDataBase()
+
     @elem = $(@elem)
     @elem.addClass('vim')
     
@@ -156,7 +185,12 @@ class ViewPort
     @elem.find(@constructCharId @cursorX, @cursorY ).addClass 'cursor'
 
   handleKeyPress: (evt) ->
-    console.log evt
+    @currentKeySequence += String.fromCharCode(evt.charCode)
+
+    if @modes[@currentMode].hasMap(@currentKeySequence)
+      @functionDatabase.call_fnc( @modes[@currentMode].getMap @currentKeySequence)
+      
+
 
   handleLineChange: (x, y) ->
     for line in [x..y]
