@@ -1,4 +1,14 @@
 window.WebVim = {}
+merge = (obj1, obj2)->
+  obj3 = {}
+  for key, value of obj1
+    obj3[key] = value
+
+  for key, value of obj2
+    obj3[key] = value
+
+  return obj3
+
 
 class Commander
   constructor: (@currentViewPortId = undefined ) ->
@@ -51,6 +61,9 @@ window.WebVim.commander = new Commander()
 class KeyMapper
   constructor: () ->
     @maps = {}
+  
+  addKeyMapper: (keyMapper) ->
+    @maps = merge keyMapper.maps, @maps
 
   setMap: (key, fnc) ->
     @maps[key] = fnc
@@ -64,21 +77,62 @@ class KeyMapper
   deleteMap: (key) ->
     delete @maps[key]
 
+class MovementKeyMapper extends KeyMapper
+  constructor: () ->
+    super()
+    @setMap "h", "moveLeft"
+    @setMap "j", "moveDown"
+    @setMap "k", "moveUp"
+    @setMap "l", "moveRight"
+
+
 class CommandKeyMapper extends KeyMapper
   constructor: () ->
     super()
+
+    @addKeyMapper new MovementKeyMapper()
 
     @setMap "t", "test"
 
 
 class BaseFunctionDataBase
 
+  constructor: (@viewPort) ->
+
   hasFunction: (fncName) ->
-    if this.prototype.fncName then true else false
-  call_fnc: (name) ->
-    this[name]()
+    if this.__proto__[fncName]? then true else false
+
+  callFunction: (name) ->
+    this[name](@viewPort)
+
+  addFunction: (name, fnc) ->
+    this.__proto__[name] = fnc
+  
+  addFunctionDataBase: (functionDB) ->
+    this.__proto__ = merge functionDB.__proto__, this.__proto
+
+class MovementFunctionDatabase extends BaseFunctionDataBase
+  moveLeft: (viewport) ->
+    viewport.cursorY -= 1
+    viewport.moveCursorTo viewport.cursorX, viewport.cursorY
+
+  moveRight: (viewport) ->
+    viewport.cursorY += 1
+    viewport.moveCursorTo viewport.cursorX, viewport.cursorY
+
+  moveUp: (viewport) ->
+    viewport.cursorX += 1
+    viewport.moveCursorTo viewport.cursorX, viewport.cursorY
+
+  moveDown: (viewport) ->
+    viewport.cursorX -= 1
+    viewport.moveCursorTo viewport.cursorX, viewport.cursorY
 
 class FunctionDataBase extends BaseFunctionDataBase
+  constructor: (viewport)->
+    super(viewport)
+    @addFunctionDataBase new MovementFunctionDatabase()
+
   test: () ->
     alert "merge"
 
@@ -141,7 +195,7 @@ class ViewPort
     @modes = {}
     @modes['command'] = new CommandKeyMapper()
     
-    @functionDatabase = new FunctionDataBase()
+    @functionDatabase = new FunctionDataBase(this)
 
     @elem = $(@elem)
     @elem.addClass('vim')
@@ -162,8 +216,9 @@ class ViewPort
     @buffer.open("Ana are mere si pere")
 
     #Set up cursor   
-
-    @moveCursorTo(1,1)
+    @cursorX = 1
+    @cursorY = 1
+    @moveCursorTo(@cursorX, @cursorY)
 
   select: () ->
     console.log "Focus"
@@ -186,9 +241,12 @@ class ViewPort
 
   handleKeyPress: (evt) ->
     @currentKeySequence += String.fromCharCode(evt.charCode)
+    console.log @currentKeySequence
 
     if @modes[@currentMode].hasMap(@currentKeySequence)
-      @functionDatabase.call_fnc( @modes[@currentMode].getMap @currentKeySequence)
+      @functionDatabase.callFunction( @modes[@currentMode].getMap @currentKeySequence)
+      @currentKeySequence = ""
+      
       
 
 
