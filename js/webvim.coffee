@@ -9,6 +9,67 @@ merge = (obj1, obj2)->
 
   return obj3
 
+class Character
+  constructor: (evt) ->
+    @symbol = @convertToSymbol(evt.keyCode, evt.shiftKey)
+
+    @specialKeys = []
+
+    @shift(evt.shiftKey)
+    @alt(evt.altKey)
+    @ctrl(evt.ctrlKey)
+  convertToSymbol: (keyCode, shift) ->
+    generalConvertions = {
+      '8,0': '<BS>',
+      '9,0': '<Tab>',
+      '13,0': '<CR>',
+      '27,0': '<ESC>',
+      '32,0': '<Space>',
+      '33,0': '<PageUp>',
+      '34,0': '<PageDown>',
+      '35,0': '<End>',
+      '36,0': '<Home>',
+      '37,0': '<LeftArrow>',
+      '38,0': '<UpArrow>',
+      '39,0': '<RightArrow>',
+      '40,0': '<DownArrow>',
+      '45,0': '<Insert>',
+      '46,0': '<Del>',
+      '188,0': ',',
+      '188,1': '<',
+      '190,0': '.',
+      '190,1': '>',
+      '191,0': '/',
+      '191,1': '?',
+      '192,0': '`',
+      '192,1': '~',
+      '219,0': '['
+      '219,1' 
+
+    }
+
+    
+  shift: (value = undefined) ->
+    if value?
+      @specialKeys[0] = value
+    else
+      @specialKeys[0]
+  
+  alt: (value = undefined) ->
+    if value?
+      @specialKeys[0] = value
+    else
+      @specialKeys[0]
+
+  ctrl: (value = undefined) ->
+    if value?
+      @specialKeys[0] = value
+    else
+      @specialKeys[0]
+
+
+
+
 
 class Commander
   constructor: (@currentViewPortId = undefined ) ->
@@ -16,11 +77,7 @@ class Commander
     @viewPortCount = 0
 
     $(document).click @handleDocumentClick
-    $(document).keypress (evt) ->
-      console.log evt.keyCode
-    #$(document).keydown @handleDocumentKeyPress
-    $(document).keydown (evt) ->
-      console.log evt.keyCode, evt.which
+    $(document).keypress @handleDocumentKeyPress
 
   handleDocumentKeyPress: (evt) =>
     evt.stopPropagation()
