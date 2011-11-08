@@ -18,6 +18,7 @@ class Character
     @shift(evt.shiftKey)
     @alt(evt.altKey)
     @ctrl(evt.ctrlKey)
+
   convertToSymbol: (keyCode, shift) ->
     generalConvertions = {
       '8,0': '<BS>',
@@ -43,10 +44,28 @@ class Character
       '191,1': '?',
       '192,0': '`',
       '192,1': '~',
-      '219,0': '['
-      '219,1' 
-
+      '219,0': '[',
+      '219,1': '{',
+      '220,0': '\\',
+      '220,1': '|',
+      '221,0': ']',
+      '221,1': '}',
+      '222,0': "'",
+      '222,1': '"'
     }
+    shift = if shift then 1 else 0
+    # Letter
+    if keyCode <= 90 and keyCode >= 65
+      if not shift
+        return String.fromCharCode(keyCode + 32)
+      return String.fromCharCode(keyCode)
+    
+    keyString =  [keyCode, shift].join ','
+
+    if generalConvertions[keyString]?
+      return generalConvertions[keyString]
+
+    return String.fromCharCode(keyCode)
 
     
   shift: (value = undefined) ->
@@ -77,7 +96,7 @@ class Commander
     @viewPortCount = 0
 
     $(document).click @handleDocumentClick
-    $(document).keypress @handleDocumentKeyPress
+    $(document).keydown @handleDocumentKeyPress
 
   handleDocumentKeyPress: (evt) =>
     evt.stopPropagation()
@@ -313,18 +332,16 @@ class ViewPort
   handleKeyPress: (evt) ->
     if evt.keyCode == 17 or evt.keyCode == 18 or evt.keyCode == 16
       return
-    @currentKeySequence += String.fromCharCode(evt.keyCode)
-    console.log evt.keyCode, String.fromCharCode(evt.keyCode)
-    console.log evt
-    console.log @currentKeySequence
-
+    char = new Character(evt)
+    @currentKeySequence += char.symbol
 
     if @modes[@currentMode].hasMap(@currentKeySequence)
       @functionDatabase.callFunction( @modes[@currentMode].getMap @currentKeySequence)
       @currentKeySequence = ""
-      
-     
+      return true
 
+    if char.symbol == '<ESC>'
+      @currentKeySequence = ""
 
   handleLineChange: (x, y) ->
     for line in [x..y]
