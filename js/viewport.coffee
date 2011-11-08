@@ -2,6 +2,7 @@ class ViewPort
   constructor: (@elem, @rows=24, @columns=80) ->
     @currentMode = 'command'
     @currentKeySequence = ""
+    @lastKeyPress = new Date()
 
     @modes = {}
     @modes['command'] = new CommandKeyMapper()
@@ -57,8 +58,18 @@ class ViewPort
   handleKeyPress: (evt) ->
     if evt.keyCode == 17 or evt.keyCode == 18 or evt.keyCode == 16
       return
+
     char = new Character(evt)
+
+    now = new Date()
+
+    if now - @lastKeyPress > 1000
+      @currentKeySequence = ""
+
+    @lastKeyPress = now
+
     @currentKeySequence += char.symbol
+    console.log @currentKeySequence
 
     if @modes[@currentMode].hasMap(@currentKeySequence)
       @functionDatabase.callFunction( @modes[@currentMode].getMap @currentKeySequence)
