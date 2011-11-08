@@ -1,10 +1,14 @@
-JS = js/webvim.js js/templates/webvim.js
+COFFEE = js/webvim.coffee js/viewport.coffee js/buffer.coffee js/functions.coffee js/global_commander.coffee js/keymaps.coffee js/viewport.coffee
+#"js/templates/webvim.js"
 CSS= css/webvim.css
 
-build: $(JS) $(CSS)
-	
-%.js : %.coffee
-	coffee -c $^
+COFFEE_JS = js/webvim.js
+SOY_JS = js/templates/webvim.js
+
+build: $(COFFEE_JS) $(CSS) $(SOY_JS)
+
+$(COFFEE_JS): $(COFFEE)
+	coffee -c --join js/webvim.coffee $^ 
 
 %.js : %.soy
 	java -jar SoyToJsSrcCompiler.jar --outputPathFormat $@ $^
