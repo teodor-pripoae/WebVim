@@ -1,10 +1,10 @@
 class ViewPort
   constructor: (@elem, @rows=24, @columns=80) ->
-    @currentMode = 'command'
     @currentKeySequence = ""
 
     @modes = {}
-    @modes['command'] = new CommandKeyMapper()
+    @modes['Command'] = new CommandKeyMapper()
+    @modes['Insert'] = new InsertKeyMapper()
     
     @functionDatabase = new FunctionDataBase(this)
 
@@ -18,7 +18,11 @@ class ViewPort
     #
     @elem.empty()
     @elem.append webvim.viewport {rows: 24, columns: 80, idPrefix: @id}
-
+    
+    @commandLine = @elem.find @constructCommandId()
+    
+    @changeMode 'Command'
+    
     #Set up a Buffer
     
     @buffer = new Buffer()
@@ -32,15 +36,18 @@ class ViewPort
     @moveCursorTo(@cursorX, @cursorY)
 
   changeMode: (mode) ->
+    @commandLine.text mode
     @currentMode = mode
-
 
   select: () ->
     console.log "Focus"
 
   deselect: () ->
     console.log "Am fost deselectat"
-
+    
+  constructCommandId: () ->
+    "##{@id}-command-line"
+    
   constructCharId: (x,y) ->
     "##{@id}-character-#{x}-#{y}"
 
@@ -55,10 +62,13 @@ class ViewPort
     @elem.find(@constructCharId @cursorX, @cursorY ).addClass 'cursor'
 
   handleKeyPress: (evt) ->
-    if evt.keyCode == 17 or evt.keyCode == 18 or evt.keyCode == 16
+    if evt.keyCode == 17 or evt.keyCode == 18 or evt.keyCode == 16 or evt.keyCode == 91
       return
+      
     char = new Character(evt)
+    console.log evt.keyCode 
     @currentKeySequence += char.symbol
+    console.log @currentKeySequence
 
     if @modes[@currentMode].hasMap(@currentKeySequence)
       @functionDatabase.callFunction( @modes[@currentMode].getMap @currentKeySequence)

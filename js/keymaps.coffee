@@ -14,7 +14,7 @@ class Character
       '9,0': '<Tab>',
       '13,0': '<CR>',
       '27,0': '<ESC>',
-      '32,0': '<Space>',
+      '32,0': ' ',
       '33,0': '<PageUp>',
       '34,0': '<PageDown>',
       '35,0': '<End>',
@@ -101,6 +101,10 @@ class MovementKeyMapper extends KeyMapper
     @setMap "j", "moveDown"
     @setMap "k", "moveUp"
     @setMap "l", "moveRight"
+    @setMap "<UpArrow>",  "moveUp"
+    @setMap "<DownArrow>", "moveDown"
+    @setMap "<LeftArrow>", "moveLeft"
+    @setMap "<RightArrow>", "moveRight"
 
 
 class CommandKeyMapper extends KeyMapper
@@ -108,7 +112,20 @@ class CommandKeyMapper extends KeyMapper
     super()
 
     @addKeyMapper new MovementKeyMapper()
-
-    @setMap "t", "test"
+    @setMap "a", "changeMode Insert"
+    
+class InsertKeyMapper extends KeyMapper
+  constructor: () ->
+    super()
+    
+    @setMap "<ESC>", "changeMode Command"
+  hasMap: (key) ->
+    return true
+    
+  getMap: (key) ->
+    if @maps[key]?
+      return super(key)
+    return "insert #{ key }"
+            
 
 

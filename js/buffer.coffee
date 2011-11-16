@@ -36,6 +36,20 @@ class Buffer
     @data[x..] = @data[(y+1)..]
 
     @propagateLineChange x, length - 1
+    
+  insertAt: (x, y, value) ->
+    if @data.length <= x
+      cnt = x - @data.length + 1
+      for i in [1..cnt]
+        @data.push ""
+        
+    if @data[x].length < y
+      cnt = y - @data[x].length
+      for i in [1..cnt]
+        @data[x] += " "
+        
+    @data[x] = @data[x][0..y-1] + value + @data[x][y..]
+    @propagateLineChange (x)  
 
   getLine: (x) ->
     if (x >= @data.length)
