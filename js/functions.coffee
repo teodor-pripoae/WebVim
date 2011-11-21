@@ -48,7 +48,12 @@ class InsertFunctionDatabase extends BaseFunctionDataBase
   insert: (viewPort, letter) ->
     viewPort.buffer.insertAt viewPort.cursorX, viewPort.cursorY, letter
     viewPort.moveCursorTo viewPort.cursorX, viewPort.cursorY + 1
-  
+    
+  insertNewLine: (viewPort) ->
+    viewPort.buffer.addNewLine viewPort.cursorX
+    viewPort.moveCursorTo viewPort.cursorX + 1, 0
+
+      
 class FunctionDataBase extends BaseFunctionDataBase
   constructor: (viewport)->
     super(viewport)

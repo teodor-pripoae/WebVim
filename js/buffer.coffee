@@ -59,4 +59,7 @@ class Buffer
 
   getLineCount: () ->
     @data.length - 1
+    
+  addNewLine: (x) ->
+    @data = @data[..x].concat([""]).concat @data[x..]
 

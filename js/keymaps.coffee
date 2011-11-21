@@ -119,6 +119,8 @@ class InsertKeyMapper extends KeyMapper
     super()
     
     @setMap "<ESC>", "changeMode Command"
+    @setMap "<CR>", "insertNewLine"
+    
   hasMap: (key) ->
     return true
     
