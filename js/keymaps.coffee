@@ -14,7 +14,7 @@ class Character
       '9,0': '<Tab>',
       '13,0': '<CR>',
       '27,0': '<ESC>',
-      '32,0': '<Space>',
+      '32,0': ' ',
       '33,0': '<PageUp>',
       '34,0': '<PageDown>',
       '35,0': '<End>',
@@ -94,21 +94,56 @@ class KeyMapper
   deleteMap: (key) ->
     delete @maps[key]
 
-class MovementKeyMapper extends KeyMapper
+class LetterMovementKeyMapper extends KeyMapper
   constructor: () ->
     super()
+    
     @setMap "h", "moveLeft"
     @setMap "j", "moveDown"
     @setMap "k", "moveUp"
     @setMap "l", "moveRight"
+    
+class ArrowMovementKeyMapper extends KeyMapper
+  constructor: () ->
+    super()
+    
+    @setMap "<UpArrow>",  "moveUp"
+    @setMap "<DownArrow>", "moveDown"
+    @setMap "<LeftArrow>", "moveLeft"
+    @setMap "<RightArrow>", "moveRight"
 
+class MovementKeyMapper extends KeyMapper
+  constructor: () ->
+    super()
+    
+    @addKeyMapper new LetterMovementKeyMapper()
+    @addKeyMapper new ArrowMovementKeyMapper()
 
 class CommandKeyMapper extends KeyMapper
   constructor: () ->
     super()
 
     @addKeyMapper new MovementKeyMapper()
-
-    @setMap "t", "test"
+    @setMap "a", "changeMode Insert"
+    
+class InsertKeyMapper extends KeyMapper
+  constructor: () ->
+    super()
+    
+    @setMap "<ESC>", "changeMode Command"
+    @setMap "<CR>", "insertNewLine"
+    @setMap "<BS>", "deleteChar"
+    @setMap " ", "insertSpace"
+    
+    @addKeyMapper new ArrowMovementKeyMapper()
+    
+  hasMap: (key) ->
+    return true
+    
+  getMap: (key) ->
+    if @maps[key]?
+      return super(key)
+    return "insert #{ key }"
+            
 
 
