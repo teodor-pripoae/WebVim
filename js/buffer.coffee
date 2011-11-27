@@ -49,6 +49,7 @@ class Buffer
         @data[x] += " "
         
     @data[x] = @data[x][0..y-1] + value + @data[x][y..]
+    
     @propagateLineChange (x)  
 
   getLine: (x) ->
@@ -61,5 +62,17 @@ class Buffer
     @data.length - 1
     
   addNewLine: (x) ->
-    @data = @data[..x].concat([""]).concat @data[x..]
+    @data = @data[..x].concat([""]).concat @data[x+1..]
+    @propagateLineChange(x + 1, @data.length - 1)
+    console.log @data
+  
+  deleteOnLineAt: (x, y1, y2 = undefined) ->
+    y2 = y1 unless y2?
+
+    @data[x] = @data[x][..(y1-1)] + @data[x][(y2+1)..]
+
+    @propagateLineChange(x)
+    
+    
+  
 

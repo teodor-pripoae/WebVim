@@ -94,18 +94,30 @@ class KeyMapper
   deleteMap: (key) ->
     delete @maps[key]
 
-class MovementKeyMapper extends KeyMapper
+class LetterMovementKeyMapper extends KeyMapper
   constructor: () ->
     super()
+    
     @setMap "h", "moveLeft"
     @setMap "j", "moveDown"
     @setMap "k", "moveUp"
     @setMap "l", "moveRight"
+    
+class ArrowMovementKeyMapper extends KeyMapper
+  constructor: () ->
+    super()
+    
     @setMap "<UpArrow>",  "moveUp"
     @setMap "<DownArrow>", "moveDown"
     @setMap "<LeftArrow>", "moveLeft"
     @setMap "<RightArrow>", "moveRight"
 
+class MovementKeyMapper extends KeyMapper
+  constructor: () ->
+    super()
+    
+    @addKeyMapper new LetterMovementKeyMapper()
+    @addKeyMapper new ArrowMovementKeyMapper()
 
 class CommandKeyMapper extends KeyMapper
   constructor: () ->
@@ -120,6 +132,10 @@ class InsertKeyMapper extends KeyMapper
     
     @setMap "<ESC>", "changeMode Command"
     @setMap "<CR>", "insertNewLine"
+    @setMap "<BS>", "deleteChar"
+    @setMap " ", "insertSpace"
+    
+    @addKeyMapper new ArrowMovementKeyMapper()
     
   hasMap: (key) ->
     return true

@@ -49,9 +49,16 @@ class InsertFunctionDatabase extends BaseFunctionDataBase
     viewPort.buffer.insertAt viewPort.cursorX, viewPort.cursorY, letter
     viewPort.moveCursorTo viewPort.cursorX, viewPort.cursorY + 1
     
+  insertSpace: (viewPort) ->
+    @insert(viewPort, ' ')
+    
   insertNewLine: (viewPort) ->
     viewPort.buffer.addNewLine viewPort.cursorX
     viewPort.moveCursorTo viewPort.cursorX + 1, 0
+  
+  deleteChar: (viewPort) ->
+    viewPort.buffer.deleteOnLineAt viewPort.cursorX, viewPort.cursorY - 1
+    viewPort.moveCursorTo viewPort.cursorX, viewPort.cursorY - 1
 
       
 class FunctionDataBase extends BaseFunctionDataBase
