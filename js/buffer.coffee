@@ -47,10 +47,12 @@ class Buffer
       cnt = y - @data[x].length
       for i in [1..cnt]
         @data[x] += " "
-        
-    @data[x] = @data[x][0..y-1] + value + @data[x][y..]
+    if y == 0
+      @data[x] = value + @data[x]
+    else
+      @data[x] = @data[x][0..y-1] + value + @data[x][y..]
     
-    @propagateLineChange (x)  
+    @propagateLineChange x
 
   getLine: (x) ->
     if (x >= @data.length)
@@ -61,18 +63,45 @@ class Buffer
   getLineCount: () ->
     @data.length - 1
     
-  addNewLine: (x) ->
-    @data = @data[..x].concat([""]).concat @data[x+1..]
-    @propagateLineChange(x + 1, @data.length - 1)
-    console.log @data
+  addNewLine: (x, y) ->
+    if y == 0
+      transport = @data[x]
+    else
+      transport = @data[x][y..]
+    
+    @data = @data[..x].concat([transport]).concat @data[x+1..]
+
+    if y == 0
+      @data[x] = ""
+    else
+      @data[x] = @data[x][..y-1]
+
+    @propagateLineChange(x, @data.length - 1)
   
   deleteOnLineAt: (x, y1, y2 = undefined) ->
     y2 = y1 unless y2?
 
-    @data[x] = @data[x][..(y1-1)] + @data[x][(y2+1)..]
+    if y1 == 0
+      @data[x] = @data[x][1..]
+    else
+      @data[x] = @data[x][..(y1-1)] + @data[x][(y2+1)..]
 
     @propagateLineChange(x)
-    
-    
-  
 
+  mergeLines: (x1, x2) ->
+    end = Math.min x2, @data.length
+
+    if x1 >= @data.length
+      return true
+
+    for x in [(x1+1) .. x2]
+      @data[x1] += @data[x]
+
+    previous_length = @data.length
+
+    @data = @data[..x1].concat @data[x2+1..]
+
+    if typeof @data == "string"
+      @data = [@data]
+
+    @propagateLineChange x1, previous_length

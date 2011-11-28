@@ -25,20 +25,16 @@ class BaseFunctionDataBase
 
 class MovementFunctionDatabase extends BaseFunctionDataBase
   moveLeft: (viewport) ->
-    viewport.cursorY -= 1
-    viewport.moveCursorTo viewport.cursorX, viewport.cursorY
+    viewport.moveCursorTo viewport.cursorX, viewport.cursorY - 1
 
   moveRight: (viewport) ->
-    viewport.cursorY += 1
-    viewport.moveCursorTo viewport.cursorX, viewport.cursorY
+    viewport.moveCursorTo viewport.cursorX, viewport.cursorY + 1
 
   moveUp: (viewport) ->
-    viewport.cursorX -= 1
-    viewport.moveCursorTo viewport.cursorX, viewport.cursorY
+    viewport.moveCursorTo viewport.cursorX - 1, viewport.cursorY
 
   moveDown: (viewport) ->
-    viewport.cursorX += 1
-    viewport.moveCursorTo viewport.cursorX, viewport.cursorY
+    viewport.moveCursorTo viewport.cursorX + 1, viewport.cursorY
 
 class GlobalFunctionDatabase extends BaseFunctionDataBase
   changeMode: (viewPort, mode) ->
@@ -53,10 +49,22 @@ class InsertFunctionDatabase extends BaseFunctionDataBase
     @insert(viewPort, ' ')
     
   insertNewLine: (viewPort) ->
-    viewPort.buffer.addNewLine viewPort.cursorX
+    viewPort.buffer.addNewLine viewPort.cursorX, viewPort.cursorY
     viewPort.moveCursorTo viewPort.cursorX + 1, 0
   
   deleteChar: (viewPort) ->
+
+    if viewPort.cursorY == 0 #We are the begining of the line and are deleting the newline char
+      if viewPort.cursorX == 0 #Nothing do delete
+        return true
+
+      lineLength = viewPort.buffer.getLine(viewPort.cursorX).length
+
+      viewPort.buffer.mergeLines viewPort.cursorX - 1, viewPort.cursorX
+
+      viewPort.moveCursorTo viewPort.cursorX - 1, viewPort.buffer.getLine(viewPort.cursorX - 1).length - lineLength
+      return true
+
     viewPort.buffer.deleteOnLineAt viewPort.cursorX, viewPort.cursorY - 1
     viewPort.moveCursorTo viewPort.cursorX, viewPort.cursorY - 1
 

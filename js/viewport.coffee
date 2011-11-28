@@ -60,6 +60,10 @@ class ViewPort
 
   moveCursorTo: (@cursorX, @cursorY) ->
     @removeCursor()
+
+    @cursorX = 0 if @cursorX < 0
+    @cursorY = 0 if @cursorY < 0
+
     @elem.find(@constructCharId @cursorX, @cursorY ).addClass 'cursor'
 
   handleKeyPress: (evt) ->
