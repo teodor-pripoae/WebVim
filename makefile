@@ -8,7 +8,7 @@ SOY_JS = js/templates/webvim.js
 build: $(COFFEE_JS) $(CSS) $(SOY_JS)
 
 $(COFFEE_JS): $(COFFEE)
-	coffee -c --join js/webvim.coffee $^ 
+	coffee  --join js/webvim.js --compile $^ 
 
 %.js : %.soy
 	java -jar SoyToJsSrcCompiler.jar --outputPathFormat $@ $^
