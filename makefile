@@ -15,3 +15,8 @@ $(COFFEE_JS): $(COFFEE)
 
 %.css: %.sass
 	sass $^:$@
+
+.PHONY: tests
+
+tests:
+	@(cd tests; make)
