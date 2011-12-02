@@ -105,3 +105,5 @@ class Buffer
       @data = [@data]
 
     @propagateLineChange x1, previous_length
+    
+window.WebVim.Buffer = Buffer

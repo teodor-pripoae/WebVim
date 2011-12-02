@@ -106,5 +106,4 @@ class ViewPort
       char = if data[column] == ' ' then '&nbsp' else data[column]
       lineElem.find(@constructCharId line, column ).html(char)
 
-$(document).ready ()->
-  window.x = new ViewPort $('.vim')
+
