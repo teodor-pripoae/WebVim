@@ -66,7 +66,40 @@ describe "Buffer", ()->
     buffer = undefined
     beforeEach () ->
       buffer= new window.WebVim.Buffer()
-      buffer.parseData "\nAna are mere\n"
+      buffer.parseData "\nAna are mere\n\n"
+
+    it "should work when inserting at the end of a line with text", () ->
+      buffer.addNewLine 1, 12
+      expect(buffer.data).toEqual ["", "Ana are mere", "", "", ""]
 
 
+    describe "should transport characters to the new line", () ->
+
+      it "when inserting on the last character", () ->
+        buffer.addNewLine 1, 11
+        expect(buffer.data).toEqual ["", "Ana are mer", "e", "", ""]
+
+      it "when inserting somewhere in the string", () ->
+        buffer.addNewLine 1, 8
+        expect(buffer.data).toEqual ["", "Ana are ", "mere", "", ""]
+
+      it "when inserting on the first character", () ->
+        buffer.addNewLine 1,0
+        expect(buffer.data).toEqual  ["", "", "Ana are mere", "", ""]
+
+
+    it "should work when inserting on an empty line", () ->
+      buffer.addNewLine 0,0
+      expect(buffer.data).toEqual ["", "", "Ana are mere", "", ""]
+
+    it "should work when inserting a line on the last line", () ->
+      buffer.addNewLine 3,0
+      expect(buffer.data).toEqual ["", "Ana are mere", "", "", ""]
+
+    it "should create empty lines till the current line if it doesn't exist", ()->
+      buffer.addNewLine 5,0
+      expect(buffer.data).toEqual ["", "Ana are mere", "", "", "", "", ""]
+
+
+  describe "when deleting a line", () ->
 

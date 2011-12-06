@@ -62,8 +62,15 @@ class Buffer
 
   getLineCount: () ->
     @data.length - 1
+  
     
   addNewLine: (x, y) ->
+
+    if @data.length <= x
+      cnt = x - @data.length + 1
+      for i in [1..cnt]
+        @data.push ""
+
     if y == 0
       transport = @data[x]
     else
