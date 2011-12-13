@@ -18,7 +18,7 @@ class ViewPort
     #Create the needed html structure
     #
     @elem.empty()
-    @elem.append webvim.viewport {rows: 24, columns: 80, idPrefix: @id}
+    @elem.append webvim.viewport {rows: @rows, columns: @columns, idPrefix: @id}
     
     @commandLine = @elem.find @constructCommandId()
     
@@ -104,6 +104,13 @@ class ViewPort
     
     for column in [0..len]
       char = if data[column] == ' ' then '&nbsp' else data[column]
+      
+      if char == String.fromCharCode 9 #it's a tab
+        char = ""
+        for i in [1..4]
+          char += '&nbsp'
+          
       lineElem.find(@constructCharId line, column ).html(char)
-
+      
+      
 window.WebVim.ViewPort = ViewPort

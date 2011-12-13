@@ -11,7 +11,7 @@ class Character
   convertToSymbol: (keyCode, shift) ->
     generalConvertions = {
       '8,0': '<BS>',
-      '9,0': '<Tab>',
+      #'9,0': '<Tab>',
       '13,0': '<CR>',
       '27,0': '<ESC>',
       '32,0': ' ',
