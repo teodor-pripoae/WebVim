@@ -1,3 +1,17 @@
+class CharRenderer
+  constructor: (@viewPort) ->
+  
+  render: (char,line, startPosition) ->
+    if char == "\t"
+      @size = 4
+    else
+      @size = 1
+      
+    for i in startPosition..(startPosition + @size)
+      $(@viewPort.cns
+        
+      
+    
 class ViewPort
   constructor: (@elem, @rows=24, @columns=80) ->
     @currentKeySequence = ""
