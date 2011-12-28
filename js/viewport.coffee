@@ -16,7 +16,7 @@ class CharRenderer
   render: (char, line, startPosition, dataX, dataY) ->
     @parseChar(char)
 
-    for i in [startPosition..(startPosition + @size)]
+    for i in [startPosition..(startPosition + @size - 1)]
       if i < @viewPort.startY or i >= @viewPort.startY + @viewPort.columns
         continue
 
@@ -72,6 +72,7 @@ class ViewPort
 
     @cursorX = 0
     @cursorY = 0
+
     @moveCursorTo(@cursorX, @cursorY)
 
   changeMode: (mode) ->
@@ -100,6 +101,37 @@ class ViewPort
     for i in [0..(@rows-1)]
       @updateLine(i)
 
+  getCursorDataX: () ->
+    rez = parseInt @elem.find(@constructCharId @cursorX - @startX, @cursorY - @startY).attr("dataX")
+    return if isNaN rez then undefined else rez
+    
+  getCursorDataY: () ->
+    rez = parseInt @elem.find(@constructCharId @cursorX - @startX, @cursorY - @startY).attr("dataY")
+    return if isNaN rez then undefined else rez
+
+
+  moveCursorToData: (dataX, dataY) ->
+    ###
+    re = /^vim-viewport-\d+-character-(\d+)-(\d+)/
+  
+    sorted_elems = @elem.find("span[dataX=\"#{dataX}\"][dataY=\"#{dataY}\"]").sort (a, b) ->
+      dataA = a.attr('id').match re
+      dataB = a.attr('id').match re
+
+      return dataA[1] - dataB[1] unless dataA[1] == dataA[2]
+      return dataA[2] - dataB[2]
+    try
+      data = $(sorted_elems[0]).attr('id').match re
+      @moveCursorTo @startX + parseInt(data[1]), @startY parseInt(data[2])
+    catch error # The element doesn't exist
+      @moveCursorTo dataX, dataY
+    ###
+    if @dataPosition[dataX][dataY] is  undefined
+      console.warn "Data Position fail #{dataX} #{dataY}"
+    else
+      @moveCursorTo dataX, @dataPosition[dataX][dataY]
+ 
+      
   moveCursorTo: (@cursorX, @cursorY) ->
     @removeCursor()
 
@@ -154,6 +186,17 @@ class ViewPort
     if char.symbol == '<ESC>'
       @currentKeySequence = ""
 
+  reset: () ->
+    @startX = 0
+    @startY = 0
+
+    @cursorX = 0
+    @cursorY = 0
+
+    @elem.find("span.char").html("&nbsp;")
+    
+    @dataPosition = []
+
   handleLineChange: (x, y) ->
     for line in [x..y]
       @updateLine(line)
@@ -168,9 +211,16 @@ class ViewPort
 
     data = @buffer.getLine(dataLine)
     len = data.length
-    
+
+    if @dataPosition[dataLine] is undefined
+      @dataPosition[dataLine] = []
+
     position = 0
-    for column in [0..len]
+    for column in [0..(len - 1)]
+      @dataPosition[dataLine][column] = position
       position += @charRenderer.render data[column], line, position, line, column
+    # add a white space as the trailing character
+    @dataPosition[dataLine][column] = position
+    @charRenderer.render ' ', line, position, line, column
       
 window.WebVim.ViewPort = ViewPort

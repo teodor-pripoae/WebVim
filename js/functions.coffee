@@ -24,17 +24,38 @@ class BaseFunctionDataBase
     this.__proto__ = merge functionDB.__proto__, this.__proto__
 
 class MovementFunctionDatabase extends BaseFunctionDataBase
+  _move: (viewport, dirX, dirY) ->
+    dataX = viewport.getCursorDataX()
+    dataY = viewport.getCursorDataY()
+
+    dataX += dirX
+    dataY += dirY
+
+    if dataX < 0 or dataX >= viewport.buffer.getLineCount()
+      return
+
+    if dataY < 0
+      return
+
+    if dataY > viewport.buffer.getLine(dataX).length
+      if dirX and not dirY
+        dataY = viewport.buffer.getLine(dataX).length
+      else
+        return
+
+    viewport.moveCursorToData(dataX, dataY)
+
   moveLeft: (viewport) ->
-    viewport.moveCursorTo viewport.cursorX, viewport.cursorY - 1
+    @_move viewport, 0, -1
 
   moveRight: (viewport) ->
-    viewport.moveCursorTo viewport.cursorX, viewport.cursorY + 1
-
+    @_move viewport, 0, 1
+  
   moveUp: (viewport) ->
-    viewport.moveCursorTo viewport.cursorX - 1, viewport.cursorY
+    @_move viewport, -1, 0
 
   moveDown: (viewport) ->
-    viewport.moveCursorTo viewport.cursorX + 1, viewport.cursorY
+    @_move viewport, 1, 0
 
 class GlobalFunctionDatabase extends BaseFunctionDataBase
   changeMode: (viewPort, mode) ->
@@ -42,31 +63,40 @@ class GlobalFunctionDatabase extends BaseFunctionDataBase
 
 class InsertFunctionDatabase extends BaseFunctionDataBase
   insert: (viewPort, letter) ->
-    viewPort.buffer.insertAt viewPort.cursorX, viewPort.cursorY, letter
-    viewPort.moveCursorTo viewPort.cursorX, viewPort.cursorY + 1
+    dataX = viewPort.getCursorDataX()
+    dataY = viewPort.getCursorDataY()
+
+    viewPort.buffer.insertAt dataX, dataY, letter
+    viewPort.moveCursorToData dataX, dataY + 1
     
   insertSpace: (viewPort) ->
     @insert(viewPort, ' ')
     
   insertNewLine: (viewPort) ->
-    viewPort.buffer.addNewLine viewPort.cursorX, viewPort.cursorY
-    viewPort.moveCursorTo viewPort.cursorX + 1, 0
+    dataX = viewPort.getCursorDataX()
+    dataY = viewPort.getCursorDataY()
+
+    viewPort.buffer.addNewLine dataX, dataY
+    viewPort.moveCursorToData dataX + 1, 0
+
   
   deleteChar: (viewPort) ->
+    dataX = viewPort.getCursorDataX()
+    dataY = viewPort.getCursorDataY()
 
-    if viewPort.cursorY == 0 #We are the begining of the line and are deleting the newline char
-      if viewPort.cursorX == 0 #Nothing do delete
+    if dataY == 0 #We are the begining of the line and are deleting the newline char
+      if dataX == 0 #Nothing do delete
         return true
 
-      lineLength = viewPort.buffer.getLine(viewPort.cursorX).length
+      lineLength = viewPort.buffer.getLine(dataX).length
 
-      viewPort.buffer.mergeLines viewPort.cursorX - 1, viewPort.cursorX
+      viewPort.buffer.mergeLines dataX - 1, dataX
+      viewPort.moveCursorToData dataX - 1, viewPort.buffer.getLine(dataX - 1).length - lineLength
 
-      viewPort.moveCursorTo viewPort.cursorX - 1, viewPort.buffer.getLine(viewPort.cursorX - 1).length - lineLength
       return true
 
-    viewPort.buffer.deleteOnLineAt viewPort.cursorX, viewPort.cursorY - 1
-    viewPort.moveCursorTo viewPort.cursorX, viewPort.cursorY - 1
+    viewPort.buffer.deleteOnLineAt dataX, dataY - 1
+    viewPort.moveCursorToData dataX, dataY - 1
 
       
 class FunctionDataBase extends BaseFunctionDataBase

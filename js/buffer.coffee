@@ -5,10 +5,12 @@ class Buffer
 
   parseData: (data) ->
     @data = data.split("\n")
+    
+    data = @data #To access it in the timeout
     for id, viewPort of  @viewPorts
       setTimeout( () ->
-        viewPort.handleLineChange(0,viewPort.rows - 1)
-      
+        viewPort.reset()
+        viewPort.handleLineChange 0, data.length - 1
       ,0)
 
   open: (data) ->
@@ -61,7 +63,7 @@ class Buffer
       @data[x]
 
   getLineCount: () ->
-    @data.length - 1
+    @data.length
   
     
   addNewLine: (x, y) ->
