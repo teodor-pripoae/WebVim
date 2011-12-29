@@ -111,21 +111,18 @@ class ViewPort
 
 
   moveCursorToData: (dataX, dataY) ->
-    ###
-    re = /^vim-viewport-\d+-character-(\d+)-(\d+)/
-  
-    sorted_elems = @elem.find("span[dataX=\"#{dataX}\"][dataY=\"#{dataY}\"]").sort (a, b) ->
-      dataA = a.attr('id').match re
-      dataB = a.attr('id').match re
+   if dataX < 0
+      dataX = 0
 
-      return dataA[1] - dataB[1] unless dataA[1] == dataA[2]
-      return dataA[2] - dataB[2]
-    try
-      data = $(sorted_elems[0]).attr('id').match re
-      @moveCursorTo @startX + parseInt(data[1]), @startY parseInt(data[2])
-    catch error # The element doesn't exist
-      @moveCursorTo dataX, dataY
-    ###
+    if dataX >= @buffer.getLineCount()
+      dataX = @buffer.getLineCount() - 1
+
+    if dataY < 0
+      dataY = 0
+      
+    if dataY > @buffer.getLine(dataX).length
+      dataY = @buffer.getLine(dataX).length
+
     if @dataPosition[dataX][dataY] is  undefined
       console.warn "Data Position fail #{dataX} #{dataY}"
     else

@@ -31,18 +31,6 @@ class MovementFunctionDatabase extends BaseFunctionDataBase
     dataX += dirX
     dataY += dirY
 
-    if dataX < 0 or dataX >= viewport.buffer.getLineCount()
-      return
-
-    if dataY < 0
-      return
-
-    if dataY > viewport.buffer.getLine(dataX).length
-      if dirX and not dirY
-        dataY = viewport.buffer.getLine(dataX).length
-      else
-        return
-
     viewport.moveCursorToData(dataX, dataY)
 
   moveLeft: (viewport) ->
@@ -56,6 +44,10 @@ class MovementFunctionDatabase extends BaseFunctionDataBase
 
   moveDown: (viewport) ->
     @_move viewport, 1, 0
+
+  moveToHome: (viewPort) ->
+    viewPort.moveCursorToData 0, 0
+  
 
 class GlobalFunctionDatabase extends BaseFunctionDataBase
   changeMode: (viewPort, mode) ->
