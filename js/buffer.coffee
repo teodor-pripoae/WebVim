@@ -137,28 +137,6 @@ class Buffer
     commit.up()
     @history.startRecording()
 
-  ###
-  insertAt: (x, y, value) ->
-    if value == "\n"
-      @addNewLine(x,y)
-      return
-
-    if @data.length <= x
-      cnt = x - @data.length + 1
-      for i in [1..cnt]
-        @data.push ""
-        
-    if @data[x].length < y
-      cnt = y - @data[x].length
-      for i in [1..cnt]
-        @data[x] += " "
-    if y == 0
-      @data[x] = value + @data[x]
-    else
-      @data[x] = @data[x][0..y-1] + value + @data[x][y..]
-    
-    @propagateLineChange x
-  ###
   getLine: (x) ->
     if (x >= @data.length)
       ""
@@ -169,38 +147,6 @@ class Buffer
   getLineCount: () ->
     @data.length
   
-  ###  
-  addNewLine: (x, y) ->
-
-    if @data.length <= x
-      cnt = x - @data.length + 1
-      for i in [1..cnt]
-        @data.push ""
-
-    if y == 0
-      transport = @data[x]
-    else
-      transport = @data[x][y..]
-    
-    @data = @data[..x].concat([transport]).concat @data[x+1..]
-
-    if y == 0
-      @data[x] = ""
-    else
-      @data[x] = @data[x][..y-1]
-
-    @propagateLineChange(x, @data.length - 1)
-  
-  deleteOnLineAt: (x, y1, y2 = undefined) ->
-    y2 = y1 unless y2?
-
-    if y1 == 0
-      @data[x] = @data[x][1..]
-    else
-      @data[x] = @data[x][..(y1-1)] + @data[x][(y2+1)..]
-
-    @propagateLineChange(x)
-  ###
   mergeLines: (x1, x2) ->
     end = Math.min x2, @data.length
 
