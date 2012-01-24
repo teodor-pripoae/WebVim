@@ -1,4 +1,4 @@
-COFFEE = js/webvim.coffee js/viewport.coffee js/buffer.coffee js/functions.coffee js/global_commander.coffee js/keymaps.coffee js/viewport.coffee
+COFFEE = js/webvim.coffee js/viewport.coffee js/buffer.coffee js/functions.coffee js/global_commander.coffee js/keymaps.coffee js/viewport.coffee js/undo.coffee
 #"js/templates/webvim.js"
 CSS= css/webvim.css
 

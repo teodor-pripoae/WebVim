@@ -2,6 +2,7 @@ class Buffer
   constructor: (data) ->
     @viewPorts = {}
     @data = [""]
+    @history = new window.WebVim.History.History(this)
 
   parseData: (data) ->
     @data = data.split("\n")
@@ -31,15 +32,117 @@ class Buffer
   deleteLines:  (x, y = undefined) ->
     x = 0 unless x > 0
     y = x unless y
+
+    commit = new window.WebVim.History.Commit(this)
+    commit.addDeleteOperation x, y
     
     diff = (y-x+1)
     length = @data.length
 
     @data[x..] = @data[(y+1)..]
 
+    @history.addCommit commit
+
     @propagateLineChange x, length - 1
+
+  insertLines: (x, values) ->
+    commit = new window.WebVim.History.Commit(this)
+
+    commit.addInsertOperation x, values
+
+    if typeof values == "string"
+      values = [values]
+    if x == 0
+      @data = values.concat(@data)
+    else
+      @data =  @data[..(x-1)].concat(values).concat @data[x..]
+
+    @history.addCommit commit
+
+    @propagateLineChange x, @data.length - 1
+
+  delete: (startX, startY, endX, endY) ->
+    commit = new window.WebVim.History.Commit(this)
+    #computes the changes on the first line
+    commit.addDeleteOperation startX, startX
+
+    if startY == 0
+      beginning = ""
+    else
+      beginning = @data[startX][..startY-1]
+
+    if endX != startX
+      ending = ""
+    else
+      ending = @data[startX][endY + 1..]
+
+    commit.addInsertOperation startX, beginning + ending
+
+    #delete the lines in between
     
+    if endX - startX >= 2
+      commit.addDeleteOperation startX + 1, endX - 1
+    
+    #The last line
+    if endX != startX
+      commit.addInsertOperation endX, endX
+      if endY <= @data[endX].length - 1
+        commit.addInsertOperation endX, @data[endX][endY+1..]
+    
+    @history.addCommit commit
+
+    @history.stopRecording()
+    commit.up()
+    @history.startRecording()
+
+  insert: (x, y, value) ->
+    commit = new window.WebVim.History.Commit(this)
+
+    if value == ""
+      return
+
+    values = value.split("\n")
+
+    #The first line
+    
+    commit.addDeleteOperation(x, x)
+
+    if y == 0
+      beginning = ""
+    else
+      beginning = @data[x][..y-1]
+
+    if values.length == 1
+      ending = @data[x][y..]
+      transport = ""
+    else
+      ending = ""
+      transport = @data[x][y..]
+
+    commit.addInsertOperation x, beginning + values[0] + ending
+
+    #The middle lines
+    
+    if values.length > 2
+      commit.addInsertOperation x+1, values[1..values.length-2]
+
+    #The last line
+
+    if values.length >= 2
+      commit.addInsertOperation x + values.length - 1, values[values.length - 1] + transport
+
+    @history.addCommit commit
+
+    @history.stopRecording()
+    commit.up()
+    @history.startRecording()
+
+  ###
   insertAt: (x, y, value) ->
+    if value == "\n"
+      @addNewLine(x,y)
+      return
+
     if @data.length <= x
       cnt = x - @data.length + 1
       for i in [1..cnt]
@@ -55,17 +158,18 @@ class Buffer
       @data[x] = @data[x][0..y-1] + value + @data[x][y..]
     
     @propagateLineChange x
-
+  ###
   getLine: (x) ->
     if (x >= @data.length)
       ""
     else
       @data[x]
+  
 
   getLineCount: () ->
     @data.length
   
-    
+  ###  
   addNewLine: (x, y) ->
 
     if @data.length <= x
@@ -96,22 +200,25 @@ class Buffer
       @data[x] = @data[x][..(y1-1)] + @data[x][(y2+1)..]
 
     @propagateLineChange(x)
-
+  ###
   mergeLines: (x1, x2) ->
     end = Math.min x2, @data.length
 
     if x1 >= @data.length
       return true
 
-    for x in [(x1+1) .. x2]
-      @data[x1] += @data[x]
+    commit = new window.WebVim.History.Commit(this)
+
+    commit.addDeleteOperation x1, x2
+    commit.addInsertOperation x1, @data[x1..x2].join('')
 
     previous_length = @data.length
 
-    @data = @data[..x1].concat @data[x2+1..]
+    @history.addCommit commit
 
-    if typeof @data == "string"
-      @data = [@data]
+    @history.stopRecording()
+    commit.up()
+    @history.startRecording()
 
     @propagateLineChange x1, previous_length
     

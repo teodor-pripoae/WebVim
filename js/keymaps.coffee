@@ -151,7 +151,7 @@ class InsertKeyMapper extends KeyMapper
     super()
     
     @setMap "<ESC>", "changeMode Command"
-    @setMap "<CR>", "insertNewLine"
+    @setMap "<CR>", "insert \n"
     @setMap "<BS>", "deleteChar"
     @setMap " ", "insertSpace"
     

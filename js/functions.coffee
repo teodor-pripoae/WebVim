@@ -58,18 +58,22 @@ class InsertFunctionDatabase extends BaseFunctionDataBase
     dataX = viewPort.getCursorDataX()
     dataY = viewPort.getCursorDataY()
 
-    viewPort.buffer.insertAt dataX, dataY, letter
-    viewPort.moveCursorToData dataX, dataY + 1
+    viewPort.buffer.insert dataX, dataY, letter
+    if letter == "\n"
+      viewPort.moveCursorToData dataX + 1, 0
+    else
+      viewPort.moveCursorToData dataX, dataY + 1
     
   insertSpace: (viewPort) ->
     @insert(viewPort, ' ')
-    
+  ###  
   insertNewLine: (viewPort) ->
     dataX = viewPort.getCursorDataX()
     dataY = viewPort.getCursorDataY()
 
     viewPort.buffer.addNewLine dataX, dataY
     viewPort.moveCursorToData dataX + 1, 0
+  ###
 
   
   deleteChar: (viewPort) ->
@@ -87,7 +91,7 @@ class InsertFunctionDatabase extends BaseFunctionDataBase
 
       return true
 
-    viewPort.buffer.deleteOnLineAt dataX, dataY - 1
+    viewPort.buffer.delete dataX, dataY- 1, dataX, dataY - 1
     viewPort.moveCursorToData dataX, dataY - 1
 
       
