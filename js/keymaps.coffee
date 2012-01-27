@@ -145,6 +145,8 @@ class CommandKeyMapper extends KeyMapper
 
     @addKeyMapper new MovementKeyMapper()
     @setMap "a", "changeMode Insert"
+    @setMap "u", "undo"
+    @setMap "C^u", "redo"
     
 class InsertKeyMapper extends KeyMapper
   constructor: () ->

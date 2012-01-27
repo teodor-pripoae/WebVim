@@ -15,7 +15,6 @@ class BaseFunctionDataBase
     splited_args[0] = @viewPort
     
     this[name].apply(this, splited_args)
-    #this[name](@viewPort)
 
   addFunction: (name, fnc) ->
     this.__proto__[name] = fnc
@@ -53,6 +52,13 @@ class GlobalFunctionDatabase extends BaseFunctionDataBase
   changeMode: (viewPort, mode) ->
     viewPort.changeMode(mode)
 
+class HistoryFunctionDatabase extends BaseFunctionDataBase
+  undo: (viewPort) ->
+    viewPort.buffer.history.undo()
+
+  redo: (viewPort) ->
+    viewPort.buffer.history.redo()
+
 class InsertFunctionDatabase extends BaseFunctionDataBase
   insert: (viewPort, letter) ->
     dataX = viewPort.getCursorDataX()
@@ -66,15 +72,6 @@ class InsertFunctionDatabase extends BaseFunctionDataBase
     
   insertSpace: (viewPort) ->
     @insert(viewPort, ' ')
-  ###  
-  insertNewLine: (viewPort) ->
-    dataX = viewPort.getCursorDataX()
-    dataY = viewPort.getCursorDataY()
-
-    viewPort.buffer.addNewLine dataX, dataY
-    viewPort.moveCursorToData dataX + 1, 0
-  ###
-
   
   deleteChar: (viewPort) ->
     dataX = viewPort.getCursorDataX()
@@ -94,6 +91,7 @@ class InsertFunctionDatabase extends BaseFunctionDataBase
     viewPort.buffer.delete dataX, dataY- 1, dataX, dataY - 1
     viewPort.moveCursorToData dataX, dataY - 1
 
+
       
 class FunctionDataBase extends BaseFunctionDataBase
   constructor: (viewport)->
@@ -101,6 +99,7 @@ class FunctionDataBase extends BaseFunctionDataBase
     @addFunctionDataBase new MovementFunctionDatabase()
     @addFunctionDataBase new GlobalFunctionDatabase()
     @addFunctionDataBase new InsertFunctionDatabase()
+    @addFunctionDataBase new HistoryFunctionDatabase()
     
   test: () ->
     alert "merge"
