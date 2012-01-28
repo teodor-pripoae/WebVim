@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>functions.coffee</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="../resources/base.css" />
+  <link rel="stylesheet" media="all" href="../resources/module.css" />
+</head>
+<body>
+  <header>
+    <h1>functions.coffee</h1>
+  </header>
+  <div id="content">
+    <div id="sidebar">
+      
+      <h4>Classes</h4>
+      <ul class="classlist">
+        
+        <li><a href="#BaseFunctionDataBase">BaseFunctionDataBase</a></li>
+        
+        <li><a href="#MovementFunctionDatabase">MovementFunctionDatabase</a></li>
+        
+        <li><a href="#GlobalFunctionDatabase">GlobalFunctionDatabase</a></li>
+        
+        <li><a href="#HistoryFunctionDatabase">HistoryFunctionDatabase</a></li>
+        
+        <li><a href="#InsertFunctionDatabase">InsertFunctionDatabase</a></li>
+        
+        <li><a href="#FunctionDataBase">FunctionDataBase</a></li>
+        
+      </ul>
+      
+      
+    </div>
+    <div id="main">
+      
+      
+      <div id="classes">
+        <h2>Classes</h2>
+        
+        <div class="class">
+          <div class="header">
+            <a id="BaseFunctionDataBase"><h3>BaseFunctionDataBase</h3></a>
+            
+          </div>
+          <div class="class_content">
+            
+            <div class="methods">
+              
+              
+              <div class="instancemethods">
+                <h3>Instance Methods</h3>
+                
+                <div class="method">
+                  <h4>constructor(@viewPort)</h4>
+                  
+                </div>
+                
+                <div class="method">
+                  <h4>hasFunction(fncName)</h4>
+                  
+                </div>
+                
+                <div class="method">
+                  <h4>callFunction(name)</h4>
+                  
+                </div>
+                
+                <div class="method">
+                  <h4>addFunction(name, fnc)</h4>
+                  
+                </div>
+                
+                <div class="method">
+                  <h4>addFunctionDataBase(functionDB)</h4>
+                  
+                </div>
+                
+              </div>
+              
+            </div>
+          </div>
+        </div>
+        
+        <div class="class">
+          <div class="header">
+            <a id="MovementFunctionDatabase"><h3>MovementFunctionDatabase</h3></a>
+            
+            
+            <a class="parent" href="#BaseFunctionDataBase"><h3>extends BaseFunctionDataBase</h3></a>
+            
+            
+          </div>
+          <div class="class_content">
+            
+            <div class="methods">
+              
+              
+              <div class="instancemethods">
+                <h3>Instance Methods</h3>
+                
+                <div class="method">
+                  <h4>_move(viewport, dirX, dirY)</h4>
+                  
+                </div>
+                
+                <div class="method">
+                  <h4>moveLeft(viewport)</h4>
+                  
+                </div>
+                
+                <div class="method">
+                  <h4>moveRight(viewport)</h4>
+                  
+                </div>
+                
+                <div class="method">
+                  <h4>moveUp(viewport)</h4>
+                  
+                </div>
+                
+                <div class="method">
+                  <h4>moveDown(viewport)</h4>
+                  
+                </div>
+                
+                <div class="method">
+                  <h4>moveToHome(viewPort)</h4>
+                  
+                </div>
+                
+              </div>
+              
+            </div>
+          </div>
+        </div>
+        
+        <div class="class">
+          <div class="header">
+            <a id="GlobalFunctionDatabase"><h3>GlobalFunctionDatabase</h3></a>
+            
+            
+            <a class="parent" href="#BaseFunctionDataBase"><h3>extends BaseFunctionDataBase</h3></a>
+            
+            
+          </div>
+          <div class="class_content">
+            
+            <div class="methods">
+              
+              
+              <div class="instancemethods">
+                <h3>Instance Methods</h3>
+                
+                <div class="method">
+                  <h4>changeMode(viewPort, mode)</h4>
+                  
+                </div>
+                
+              </div>
+              
+            </div>
+          </div>
+        </div>
+        
+        <div class="class">
+          <div class="header">
+            <a id="HistoryFunctionDatabase"><h3>HistoryFunctionDatabase</h3></a>
+            
+            
+            <a class="parent" href="#BaseFunctionDataBase"><h3>extends BaseFunctionDataBase</h3></a>
+            
+            
+          </div>
+          <div class="class_content">
+            
+            <div class="methods">
+              
+              
+              <div class="instancemethods">
+                <h3>Instance Methods</h3>
+                
+                <div class="method">
+                  <h4>undo(viewPort)</h4>
+                  
+                </div>
+                
+                <div class="method">
+                  <h4>redo(viewPort)</h4>
+                  
+                </div>
+                
+              </div>
+              
+            </div>
+          </div>
+        </div>
+        
+        <div class="class">
+          <div class="header">
+            <a id="InsertFunctionDatabase"><h3>InsertFunctionDatabase</h3></a>
+            
+            
+            <a class="parent" href="#BaseFunctionDataBase"><h3>extends BaseFunctionDataBase</h3></a>
+            
+            
+          </div>
+          <div class="class_content">
+            
+            <div class="methods">
+              
+              
+              <div class="instancemethods">
+                <h3>Instance Methods</h3>
+                
+                <div class="method">
+                  <h4>insert(viewPort, letter)</h4>
+                  
+                </div>
+                
+                <div class="method">
+                  <h4>insertSpace(viewPort)</h4>
+                  
+                </div>
+                
+                <div class="method">
+                  <h4>deleteChar(viewPort)</h4>
+                  
+                </div>
+                
+              </div>
+              
+            </div>
+          </div>
+        </div>
+        
+        <div class="class">
+          <div class="header">
+            <a id="FunctionDataBase"><h3>FunctionDataBase</h3></a>
+            
+            
+            <a class="parent" href="#BaseFunctionDataBase"><h3>extends BaseFunctionDataBase</h3></a>
+            
+            
+          </div>
+          <div class="class_content">
+            
+            <div class="methods">
+              
+              
+              <div class="instancemethods">
+                <h3>Instance Methods</h3>
+                
+                <div class="method">
+                  <h4>constructor(viewport)</h4>
+                  
+                </div>
+                
+                <div class="method">
+                  <h4>test()</h4>
+                  
+                </div>
+                
+              </div>
+              
+            </div>
+          </div>
+        </div>
+        
+      </div>
+      
+      
+    </div>
+  </div>
+</body>
+</html>
