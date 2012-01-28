@@ -1,0 +1,9 @@
+.vim {
+  border-color: black;
+  border-width: 5px;
+  border-style: solid; }
+  .vim .cursor {
+    background-color: black;
+    color: white; }
+  .vim .char {
+    font-family: Courier, monospace; }
