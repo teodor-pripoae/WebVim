@@ -23,3 +23,6 @@ tests:
 
 build-gh-pages:
 	./build-gh-pages.sh
+
+doc:
+	coffeedoc $(COFFEE)
