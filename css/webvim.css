@@ -1,7 +1,10 @@
 .vim {
+  display: inline-block;
   border-color: black;
   border-width: 5px;
   border-style: solid; }
+  .vim .line {
+    display: inline-block; }
   .vim .cursor {
     background-color: black;
     color: white; }
