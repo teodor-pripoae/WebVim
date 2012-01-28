@@ -20,3 +20,6 @@ $(COFFEE_JS): $(COFFEE)
 
 tests:
 	@(cd tests; make)
+
+build-gh-pages:
+	./build-gh-pages.sh
