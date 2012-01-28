@@ -1,5 +1,43 @@
 ###
-  This module containts the buffer related classes
+  Buffers
+  =======
+
+  Buffers are a core part of WebVim. They have the following roles:
+
+  1. Loading and writing data from/to files.
+  2. Handle all the modifications on the text.
+  3. Keeping a history of changes to the text.
+  
+
+  1. Loading and writing data from/to files.
+  ------------------------------------------
+
+    This is part is still under heavy development and very probabil to change.
+    
+    The only stable part here is the parseData function which parses a string
+    and loads it as the text of the buffer
+  
+  2. Handle all the modifcations on the text.
+  --------------------------------------------
+    
+    Currently the buffer implements two base functions **deleteLines** and **inserLines**
+
+    The are 3 other functions **insert**, **delete** and **mergeLines** which are implemented
+    using the above functions
+
+  3. Keeping a history of changes to the text.
+  ---------------------------------------------
+
+    Currently the all the functions  from section 2 push their changes to the history.
+    If you would like to call one of those functions without modifing the history( not recommended )
+    you should call:
+    
+    > buffer.history.stopRecording()
+
+    Don't forget to restart the history recording by using:
+
+    > buffer.history.startRecording()
+
 ###
 
 
