@@ -13,7 +13,7 @@ webvim.viewport = function(opt_data, opt_sb) {
     for (var j9 = 0; j9 < jLimit9; j9++) {
       output.append('<span id="', soy.$$escapeHtml(opt_data.idPrefix), '-character-', soy.$$escapeHtml(i3), '-', soy.$$escapeHtml(j9), '" class="char">&nbsp</span>');
     }
-    output.append('</div>');
+    output.append('</div><br/>');
   }
   output.append('<span id="', soy.$$escapeHtml(opt_data.idPrefix), '-command-line">Test</span>');
   return opt_sb ? '' : output.toString();
