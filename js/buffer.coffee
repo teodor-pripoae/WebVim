@@ -1,10 +1,29 @@
+###
+  This module containts the buffer related classes
+###
+
+
 class Buffer
+  ###
+    The main role of a buffer is to store and alter the text from a given source.
+  ###
+  
   constructor: (data) ->
+    ###
+      data - The initial text with which the buffer is initialized
+    ###
+
     @viewPorts = {}
     @data = [""]
     @history = new window.WebVim.History.History(this)
 
   parseData: (data) ->
+    ###
+      This functions parses a raw string and loads it as the text of the buffer.
+
+      data - The string to be parsed
+    ###
+    
     @data = data.split("\n")
     
     data = @data #To access it in the timeout
@@ -15,21 +34,43 @@ class Buffer
       ,0)
 
   open: (data) ->
+    ###
+      This function should load the buffer from a given source.
+      Currently it only loads data from a string.
+    ###
+    
     @parseData(data)
 
   addViewPort: (viewPort) ->
+    ###
+      Adds a viewPort to the list of viewPorts that will be notified when the buffer's data is changed
+    ###
+    
     @viewPorts[viewPort.id] = viewPort
 
   deleteViewPort: (viewPort) ->
+    ###
+      Deletes a viewPort to the list of viewPorts that will be notified when the buffer's data is changed
+    ###
+    
     delete @viewPorts[viewPort.id]
 
   propagateLineChange: (x, y = undefined) ->
+    ###
+      This function announces the viewPorts of the lines that have changed.
+    ###
+    
     y = x if not y
 
     for id, viewPort of  @viewPorts
       viewPort.handleLineChange(x,y)
 
   deleteLines:  (x, y = undefined) ->
+    ###
+      Deletes the lines from x to y from the text
+      If y is not specified it will default to x
+    ###
+      
     x = 0 unless x > 0
     y = x unless y
 
@@ -46,6 +87,11 @@ class Buffer
     @propagateLineChange x, length - 1
 
   insertLines: (x, values) ->
+    ###
+      Inserts lines of text starting on the line x
+      values can be a string (if only one line is to be inserted) or an array of strings
+    ###
+
     commit = new window.WebVim.History.Commit(this)
 
     commit.addInsertOperation x, values
@@ -62,8 +108,13 @@ class Buffer
     @propagateLineChange x, @data.length - 1
 
   delete: (startX, startY, endX, endY) ->
+    ###
+      Deletes texts from line startX column startY to line endX and column endY
+    ###
+    
     commit = new window.WebVim.History.Commit(this)
     #computes the changes on the first line
+    
     commit.addDeleteOperation startX, startX
 
     if startY == 0
@@ -96,6 +147,11 @@ class Buffer
     @history.startRecording()
 
   insert: (x, y, value) ->
+    ###
+      Inserts text starting from line x column y
+      
+      value - should be a string containing the text to be inserted
+    ###
     commit = new window.WebVim.History.Commit(this)
 
     if value == ""
@@ -138,6 +194,10 @@ class Buffer
     @history.startRecording()
 
   getLine: (x) ->
+    ###
+      Returns the line x as a string
+    ###
+    
     if (x >= @data.length)
       ""
     else
@@ -145,9 +205,16 @@ class Buffer
   
 
   getLineCount: () ->
+    ###
+      Returns the number of lines.
+    ###
     @data.length
   
   mergeLines: (x1, x2) ->
+    ###
+      Merges the lines from x1 to x2 into a single line
+    ###
+    
     end = Math.min x2, @data.length
 
     if x1 >= @data.length
