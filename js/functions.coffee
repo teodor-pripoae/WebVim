@@ -7,7 +7,7 @@ class BaseFunctionDataBase
 
   callFunction: (name) ->
     if typeof name  == "function"
-        name(@viewport)
+        name(@viewPort)
         
     splited_args = name.split(" ")
     
@@ -23,30 +23,51 @@ class BaseFunctionDataBase
     this.__proto__ = merge functionDB.__proto__, this.__proto__
 
 class MovementFunctionDatabase extends BaseFunctionDataBase
-  _move: (viewport, dirX, dirY) ->
-    dataX = viewport.getCursorDataX()
-    dataY = viewport.getCursorDataY()
+  _move: (viewPort, dirX, dirY) ->
+    dataX = viewPort.getCursorDataX()
+    dataY = viewPort.getCursorDataY()
 
     dataX += dirX
     dataY += dirY
 
-    viewport.moveCursorToData(dataX, dataY)
+    viewPort.moveCursorToData(dataX, dataY)
 
-  moveLeft: (viewport) ->
-    @_move viewport, 0, -1
+  moveLeft: (viewPort) ->
+    @_move viewPort, 0, -1
 
-  moveRight: (viewport) ->
-    @_move viewport, 0, 1
+  moveRight: (viewPort) ->
+    @_move viewPort, 0, 1
   
-  moveUp: (viewport) ->
-    @_move viewport, -1, 0
+  moveUp: (viewPort) ->
+    @_move viewPort, -1, 0
 
-  moveDown: (viewport) ->
-    @_move viewport, 1, 0
+  moveDown: (viewPort) ->
+    @_move viewPort, 1, 0
 
   moveToHome: (viewPort) ->
-    viewPort.moveCursorToData 0, 0
+    viewPort.moveCursorToData viewPort.getCursorDataX(), 0
   
+  moveToEnd: (viewPort) ->
+    row = viewPort.getCursorDataX()
+    col = viewPort.buffer.getLine(row).length
+    viewPort.buffer.insert
+
+class CommandFunctionDatabase extends BaseFunctionDataBase
+  insertLineAfter: (viewPort) ->
+    row = viewPort.getCursorDataX()
+    console.log "in jos"
+    col = viewPort.buffer.getLine(row).length
+
+    viewPort.buffer.insert row, col, "\n"
+    viewPort.moveCursorToData row + 1, 0
+    viewPort.changeMode("Insert")
+
+  insertLineBefore: (viewPort) ->
+    row = viewPort.getCursorDataY()
+    console.log "in sus"
+    
+    viewPort.buffer.insert row, 0, "\n"
+    viewPort.changeMode("Insert")
 
 class GlobalFunctionDatabase extends BaseFunctionDataBase
   changeMode: (viewPort, mode) ->
@@ -72,7 +93,7 @@ class InsertFunctionDatabase extends BaseFunctionDataBase
     
   insertSpace: (viewPort) ->
     @insert(viewPort, ' ')
-  
+
   deleteChar: (viewPort) ->
     dataX = viewPort.getCursorDataX()
     dataY = viewPort.getCursorDataY()
@@ -94,12 +115,13 @@ class InsertFunctionDatabase extends BaseFunctionDataBase
 
       
 class FunctionDataBase extends BaseFunctionDataBase
-  constructor: (viewport)->
-    super(viewport)
+  constructor: (viewPort)->
+    super(viewPort)
     @addFunctionDataBase new MovementFunctionDatabase()
     @addFunctionDataBase new GlobalFunctionDatabase()
     @addFunctionDataBase new InsertFunctionDatabase()
     @addFunctionDataBase new HistoryFunctionDatabase()
+    @addFunctionDataBase new CommandFunctionDatabase()
     
   test: () ->
     alert "merge"

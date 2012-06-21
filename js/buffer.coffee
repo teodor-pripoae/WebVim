@@ -12,12 +12,12 @@
   1. Loading and writing data from/to files.
   ------------------------------------------
 
-    This is part is still under heavy development and very probabil to change.
+    This is part is still under heavy development and very probably to change.
     
     The only stable part here is the parseData function which parses a string
     and loads it as the text of the buffer
   
-  2. Handle all the modifcations on the text.
+  2. Handle all the modifications on the text.
   --------------------------------------------
     
     Currently the buffer implements two base functions **deleteLines** and **inserLines**
@@ -28,7 +28,7 @@
   3. Keeping a history of changes to the text.
   ---------------------------------------------
 
-    Currently the all the functions  from section 2 push their changes to the history.
+    Currently all the functions  from section 2 push their changes to the history.
     If you would like to call one of those functions without modifing the history( not recommended )
     you should call:
     

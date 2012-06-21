@@ -120,6 +120,8 @@ class LetterMovementKeyMapper extends KeyMapper
     @setMap "j", "moveDown"
     @setMap "k", "moveUp"
     @setMap "l", "moveRight"
+    @setMap "0", "moveToHome"
+    @setMap "$", "moveToEnd"
     
 class ArrowMovementKeyMapper extends KeyMapper
   constructor: () ->
@@ -130,6 +132,7 @@ class ArrowMovementKeyMapper extends KeyMapper
     @setMap "<LeftArrow>", "moveLeft"
     @setMap "<RightArrow>", "moveRight"
     @setMap "<Home>", "moveToHome"
+    @setMap "<End>", "moveToEnd"
 
 class MovementKeyMapper extends KeyMapper
   constructor: () ->
@@ -147,6 +150,8 @@ class CommandKeyMapper extends KeyMapper
     @setMap "a", "changeMode Insert"
     @setMap "u", "undo"
     @setMap "C^u", "redo"
+    @setMap "o", "insertLineAfter"
+    @setMap "O", "insertLineBefore"
     
 class InsertKeyMapper extends KeyMapper
   constructor: () ->
