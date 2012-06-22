@@ -22,7 +22,6 @@ class BaseFunctionDataBase
   addFunctionDataBase: (functionDB) ->
     this.__proto__ = merge functionDB.__proto__, this.__proto__
 
-class MovementFunctionDatabase extends BaseFunctionDataBase
   _move: (viewPort, dirX, dirY) ->
     dataX = viewPort.getCursorDataX()
     dataY = viewPort.getCursorDataY()
@@ -32,6 +31,7 @@ class MovementFunctionDatabase extends BaseFunctionDataBase
 
     viewPort.moveCursorToData(dataX, dataY)
 
+class MovementFunctionDatabase extends BaseFunctionDataBase
   moveLeft: (viewPort) ->
     @_move viewPort, 0, -1
 
@@ -55,23 +55,38 @@ class MovementFunctionDatabase extends BaseFunctionDataBase
 class CommandFunctionDatabase extends BaseFunctionDataBase
   insertLineAfter: (viewPort) ->
     row = viewPort.getCursorDataX()
-    console.log "in jos"
     col = viewPort.buffer.getLine(row).length
 
     viewPort.buffer.insert row, col, "\n"
     viewPort.moveCursorToData row + 1, 0
-    viewPort.changeMode("Insert")
+    viewPort.changeMode "Insert"
 
   insertLineBefore: (viewPort) ->
-    row = viewPort.getCursorDataY()
-    console.log "in sus"
+    row = viewPort.getCursorDataX()
     
     viewPort.buffer.insert row, 0, "\n"
+    viewPort.changeMode "Insert"
+
+  insertAtBegOfLine: (viewPort) ->
+    row = viewPort.getCursorDataX()
+    
+    viewPort.moveCursorToData row, 0
+    viewPort.changeMode "Insert"
+
+  insertAtEndOfLine: (viewPort) ->
+    row = viewPort.getCursorDataX()
+    col = viewPort.buffer.getLine(row).length
+
+    viewPort.moveCursorToData row, col
+    viewPort.changeMode "Insert"
+
+  gotoInsertMode: (viewPort, append=null) ->
+    # `a` inserts one position right than `i`
+    @_move viewPort, 0, 1 if append   
     viewPort.changeMode("Insert")
 
 class GlobalFunctionDatabase extends BaseFunctionDataBase
-  changeMode: (viewPort, mode) ->
-    viewPort.changeMode(mode)
+  
 
 class HistoryFunctionDatabase extends BaseFunctionDataBase
   undo: (viewPort) ->
@@ -111,6 +126,11 @@ class InsertFunctionDatabase extends BaseFunctionDataBase
 
     viewPort.buffer.delete dataX, dataY- 1, dataX, dataY - 1
     viewPort.moveCursorToData dataX, dataY - 1
+
+  gotoCommandMode: (viewPort) ->
+    # Simulate vim move on char left when going to command mode
+    @_move viewPort, 0, -1
+    viewPort.changeMode "Command"
 
 
       

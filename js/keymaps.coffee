@@ -147,17 +147,22 @@ class CommandKeyMapper extends KeyMapper
     super()
 
     @addKeyMapper new MovementKeyMapper()
-    @setMap "a", "changeMode Insert"
+    @setMap "a", "gotoInsertMode true"
+    @setMap "i", "gotoInsertMode"
+
     @setMap "u", "undo"
     @setMap "C^u", "redo"
     @setMap "o", "insertLineAfter"
     @setMap "O", "insertLineBefore"
+
+    @setMap "I", "insertAtBegOfLine"
+    @setMap "A", "insertAtEndOfLine"
     
 class InsertKeyMapper extends KeyMapper
   constructor: () ->
     super()
     
-    @setMap "<ESC>", "changeMode Command"
+    @setMap "<ESC>", "gotoCommandMode"
     @setMap "<CR>", "insert \n"
     @setMap "<BS>", "deleteChar"
     @setMap " ", "insertSpace"
